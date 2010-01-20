@@ -122,4 +122,18 @@ describe Hashie::Mash do
       initial.test?.should be_true
     end
   end
+  
+  context "#to_hash" do
+    it "convert to hash (deeply)" do
+      @mash.test = 1
+      @mash.a = Hashie::Mash.new(:name => "testa")
+      @mash.b = [{:c => 1}, {:d => {:name => "hello"}}]
+      h = @mash.to_hash
+      h['test'].should == 1
+      h['a']['name'].should == "testa"
+      h['b'][0]['c'].should == 1
+      h['b'][1]['d']['name'].should == "hello"
+    end
+  end
+  
 end

@@ -113,7 +113,9 @@ module Hashie
 
     # Converts a mash back to a hash (with stringified keys)
     def to_hash
-      Hash.new(default).merge(self)
+      h = Hash.new(default).merge(self)
+      h.each {|key,val| h[key] = convert_value_to_hash(val)}
+      h
     end
 
    def method_missing(method_name, *args)
@@ -135,6 +137,18 @@ module Hashie
 
     def convert_key(key) #:nodoc:
       key.to_s
+    end
+
+    #------------------
+    def convert_value_to_hash(val)
+      case val
+      when Mash
+        val.to_hash
+      when Array
+        val.collect(&:to_hash)
+      else
+        val
+      end
     end
 
     def convert_value(val, duping=false) #:nodoc:
